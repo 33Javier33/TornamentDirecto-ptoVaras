@@ -1,0 +1,36 @@
+﻿        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+        
+        /* Bracket Connecting Lines */
+        .bracket-match {
+            position: relative;
+        }
+        
+        /* Flashing Alert Animation */
+        @keyframes flash-red {
+            0%, 100% { background-color: rgba(244, 63, 94, 0.15); border-color: #f43f5e; }
+            50% { background-color: rgba(244, 63, 94, 0.4); border-color: #fda4af; }
+        }
+        .timer-warning {
+            animation: flash-red 0.8s infinite;
+        }
+
+        /* Glassmorphism effects */
+        .glass-panel {
+            background: rgba(19, 27, 46, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }

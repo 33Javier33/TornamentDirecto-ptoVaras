@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toornament Pro - Pantalla de Tiempo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfeff',
+                            100: '#cffaff',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            900: '#164e63',
+                        },
+                        accent: {
+                            mint: '#10b981',
+                            purple: '#a855f7',
+                            rose: '#f43f5e',
+                            gold: '#fbbf24'
+                        },
+                        darkBg: '#0b0f17',
+                        darkCard: '#131b2e',
+                        darkBorder: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Orbitron', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-darkBg text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- PROJECTION WRAPPER: Pantalla de Tiempo a pantalla completa -->
+    <div class="flex-grow flex items-center justify-center px-4 py-8 sm:py-12 relative overflow-hidden">
+        <!-- Subtle ambient lighting effect behind clock -->
+        <div class="absolute -top-24 -left-24 w-60 h-60 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -right-24 w-60 h-60 bg-accent-purple/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="w-full max-w-5xl bg-darkCard border border-darkBorder rounded-3xl p-6 sm:p-10 text-center relative overflow-hidden shadow-2xl">
+            <!-- Top Bar: Back to Panel + Status -->
+            <div class="flex items-center justify-between mb-8">
+                <a href="index.html" class="text-xs font-semibold text-slate-400 hover:text-brand-400 transition flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Panel
+                </a>
+                <span id="timer-status-dot" class="w-2 h-2 rounded-full bg-slate-600 inline-block ml-1"></span>
+            </div>
+
+            <!-- Active Selected Match Banner -->
+            <div id="activeMatchBanner" class="mb-6 inline-flex items-center gap-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-full text-xs font-semibold text-brand-400">
+                <i class="fa-solid fa-gamepad"></i>
+                <span id="activeMatchText">Modo Libre - Tiempo General de Ronda</span>
+            </div>
+
+            <!-- Giant Digital Clock -->
+            <div class="py-4">
+                <div id="timerDisplay" class="font-mono text-7xl sm:text-8xl md:text-9xl font-black tracking-wider text-white drop-shadow-[0_0_25px_rgba(34,211,238,0.2)]">
+                    15:00
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden mb-8 border border-slate-800">
+                <div id="timerProgressBar" class="bg-gradient-to-r from-brand-500 to-accent-mint h-full w-full transition-all duration-300"></div>
+            </div>
+
+            <!-- Primary Controls (Play, Pause, Reset) -->
+            <div class="flex items-center justify-center gap-4 mb-8">
+                <button id="btnTimerStart" onclick="startTimer()" class="w-16 h-16 sm:w-20 sm:h-20 bg-brand-500 hover:bg-brand-400 text-slate-950 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition shadow-lg shadow-brand-500/25 active:scale-95">
+                    <i class="fa-solid fa-play ml-1"></i>
+                </button>
+                <button id="btnTimerPause" onclick="pauseTimer()" class="w-16 h-16 sm:w-20 sm:h-20 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition active:scale-95 hidden">
+                    <i class="fa-solid fa-pause"></i>
+                </button>
+                <button onclick="resetTimer()" class="w-14 h-14 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-2xl flex items-center justify-center text-xl transition active:scale-95" title="Reiniciar">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+
+            <!-- Time Adjustments Preset Row -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                <button onclick="adjustTimer(-60)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold py-2 rounded-xl transition">-1 Min</button>
+                <button onclick="adjustTimer(60)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold py-2 rounded-xl transition">+1 Min</button>
+                <button onclick="setTimerDuration(300)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-brand-400 text-xs font-semibold py-2 rounded-xl transition">5 Min</button>
+                <button onclick="setTimerDuration(600)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-brand-400 text-xs font-semibold py-2 rounded-xl transition">10 Min</button>
+                <button onclick="setTimerDuration(900)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-brand-400 text-xs font-semibold py-2 rounded-xl transition">15 Min</button>
+                <button onclick="setTimerDuration(1200)" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-brand-400 text-xs font-semibold py-2 rounded-xl transition">20 Min</button>
+            </div>
+
+            <!-- Sound Toggle & Test -->
+            <div class="mt-8 pt-6 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="soundToggle" checked class="w-4 h-4 rounded accent-brand-500">
+                    <span>Sonido de Alarma Web Audio</span>
+                </label>
+                <button onclick="playBuzzerSound()" class="text-brand-400 hover:text-brand-300 transition flex items-center gap-1">
+                    <i class="fa-solid fa-volume-high"></i> Probar Sonido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js" defer></script>
+</body>
+</html>
